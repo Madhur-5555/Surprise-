@@ -96,9 +96,9 @@
 </head>
 <body>
 
-  <!-- Background Music -->
+  <!-- Background Music (Your Limewire MP3 link) -->
   <audio id="bg-music" loop>
-    <source src="https://dl.sndup.net/8cbq/music-khushi.mp3" type="audio/mpeg">
+    <source src="https://limewire.com/d/JIe7r#dOC0wz4jcR" type="audio/mpeg">
   </audio>
 
   <div id="heart-container"></div>
@@ -111,12 +111,11 @@
     <button onclick="revealGift()">Click to See Your Smile</button>
 
     <div id="gift-box">
-      <img class="slideshow" src="https://i.imgur.com/F3KVuYA.jpg" alt="Khushi Surprise Image" />
+      <img class="slideshow" src="https://i.ibb.co/xtYJQF8/khushi.jpg" alt="Khushi Image" />
     </div>
   </div>
 
   <script>
-    // Hearts animation
     function createHeart() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
@@ -129,14 +128,12 @@
 
     let heartInterval = setInterval(createHeart, 150);
 
-    // Show message and content after hearts
     setTimeout(() => {
       clearInterval(heartInterval);
       document.getElementById("surprise-content").style.display = "block";
       typeMessage();
     }, 4000);
 
-    // Typewriter effect
     const msg = `Tere jaise dost ho toh zindagi mein har din special lagta hai.
 Na tu bhai hai, na behen, par tu hai meri sabse khaas friend.
 Teri yaari hi meri smile ki wajah hai!
@@ -155,19 +152,16 @@ Stay happy and awesome always!`;
       }, 50);
     }
 
-    // Music play
     function playMusic() {
       const music = document.getElementById("bg-music");
       music.play();
     }
 
-    // Reveal gift and launch fireworks
     function revealGift() {
       document.getElementById("gift-box").style.display = "block";
       launchFireworks();
     }
 
-    // Fireworks Canvas
     const canvas = document.getElementById('fireworks');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
