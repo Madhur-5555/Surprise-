@@ -15,18 +15,21 @@
       padding-top: 50px;
     }
 
-    #surprise-content {
-      margin-top: 50px;
-      display: none;
+    #heart-container, #fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
     }
 
-    .sparkle {
+    .heart {
       position: absolute;
-      width: 5px;
-      height: 5px;
-      background: gold;
-      border-radius: 50%;
-      animation: fall 2s linear forwards;
+      font-size: 24px;
+      animation: fall 3s linear forwards;
+      user-select: none;
     }
 
     @keyframes fall {
@@ -34,8 +37,23 @@
       100% { transform: translateY(100vh); opacity: 0; }
     }
 
+    #surprise-content {
+      position: relative;
+      z-index: 2;
+      margin-top: 50px;
+      display: none;
+    }
+
+    #message {
+      font-size: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      white-space: pre-wrap;
+      min-height: 150px;
+    }
+
     button {
-      margin-top: 20px;
+      margin: 10px;
       padding: 10px 20px;
       font-size: 18px;
       background: gold;
@@ -46,9 +64,9 @@
     }
 
     #gift-box {
-      margin-top: 30px;
       display: none;
       animation: pop 1s ease;
+      margin-top: 20px;
     }
 
     @keyframes pop {
@@ -56,11 +74,19 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
-    img {
+    .slideshow {
       max-width: 300px;
-      margin-top: 20px;
+      margin: 20px auto;
       border-radius: 12px;
       box-shadow: 0 0 10px gold;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
     }
 
     audio {
@@ -70,46 +96,116 @@
 </head>
 <body>
 
-  <audio autoplay loop>
-    <source src="https://www.youtube.com/embed/0pWsCiBvLOk" type="audio/mpeg">
+  <!-- Background Music -->
+  <audio id="bg-music" loop>
+    <source src="https://dl.sndup.net/8cbq/music-khushi.mp3" type="audio/mpeg">
   </audio>
 
-  <div id="sparkle-container"></div>
+  <div id="heart-container"></div>
+  <canvas id="fireworks"></canvas>
 
   <div id="surprise-content">
     <h1>Hey Khushi!</h1>
-    <p style="white-space: pre-wrap;">
-Tere jaise dost ho toh zindagi mein har din special lagta hai.
-Na tu bhai hai, na behen, par tu hai meri sabse khaas friend.
-Teri yaari hi meri smile ki wajah hai!
-
-Stay happy and awesome always!
-    </p>
+    <div id="message"></div>
+    <button onclick="playMusic()">Play Music</button>
     <button onclick="revealGift()">Click to See Your Smile</button>
-    
+
     <div id="gift-box">
-      <img src="file-3wuZ6f6qpG1PdsVshzVWmU" alt="Khushi Surprise Image" />
+      <img class="slideshow" src="https://i.imgur.com/F3KVuYA.jpg" alt="Khushi Surprise Image" />
     </div>
   </div>
 
   <script>
-    function createSparkle() {
-      const sparkle = document.createElement("div");
-      sparkle.classList.add("sparkle");
-      sparkle.style.left = Math.random() * window.innerWidth + "px";
-      document.getElementById("sparkle-container").appendChild(sparkle);
-      setTimeout(() => sparkle.remove(), 2000);
+    // Hearts animation
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.textContent = "❤️";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.top = "-20px";
+      document.getElementById("heart-container").appendChild(heart);
+      setTimeout(() => heart.remove(), 3000);
     }
 
-    let interval = setInterval(createSparkle, 100);
-    setTimeout(() => {
-      clearInterval(interval);
-      document.getElementById("surprise-content").style.display = "block";
-    }, 3000);
+    let heartInterval = setInterval(createHeart, 150);
 
+    // Show message and content after hearts
+    setTimeout(() => {
+      clearInterval(heartInterval);
+      document.getElementById("surprise-content").style.display = "block";
+      typeMessage();
+    }, 4000);
+
+    // Typewriter effect
+    const msg = `Tere jaise dost ho toh zindagi mein har din special lagta hai.
+Na tu bhai hai, na behen, par tu hai meri sabse khaas friend.
+Teri yaari hi meri smile ki wajah hai!
+
+Stay happy and awesome always!`;
+    let index = 0;
+
+    function typeMessage() {
+      const messageEl = document.getElementById("message");
+      const typing = setInterval(() => {
+        if (index < msg.length) {
+          messageEl.textContent += msg[index++];
+        } else {
+          clearInterval(typing);
+        }
+      }, 50);
+    }
+
+    // Music play
+    function playMusic() {
+      const music = document.getElementById("bg-music");
+      music.play();
+    }
+
+    // Reveal gift and launch fireworks
     function revealGift() {
       document.getElementById("gift-box").style.display = "block";
+      launchFireworks();
     }
+
+    // Fireworks Canvas
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fireworks = [];
+
+    function launchFireworks() {
+      setInterval(() => {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        for (let i = 0; i < 100; i++) {
+          fireworks.push({
+            x, y,
+            radius: Math.random() * 2,
+            dx: (Math.random() - 0.5) * 5,
+            dy: (Math.random() - 0.5) * 5,
+            alpha: 1
+          });
+        }
+      }, 600);
+    }
+
+    function drawFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworks.forEach((f, index) => {
+        f.x += f.dx;
+        f.y += f.dy;
+        f.alpha -= 0.01;
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, ${Math.random()*255}, ${Math.random()*255}, ${f.alpha})`;
+        ctx.fill();
+        if (f.alpha <= 0) fireworks.splice(index, 1);
+      });
+      requestAnimationFrame(drawFireworks);
+    }
+    drawFireworks();
   </script>
 
 </body>
